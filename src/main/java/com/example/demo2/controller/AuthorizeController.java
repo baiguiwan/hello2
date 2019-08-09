@@ -3,6 +3,8 @@ package com.example.demo2.controller;
 import com.example.demo2.GithubProvider.GithubProvider;
 import com.example.demo2.dto.AccessTokenDTO;
 import com.example.demo2.dto.GithubUser;
+import com.example.demo2.mapper.UserMapper;
+import com.example.demo2.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 @Controller
 public class AuthorizeController {
@@ -21,6 +24,8 @@ public class AuthorizeController {
     private String clientSecret;
     @Value("${github.redirect.uri}")
     private String redirectUri;
+    @Autowired
+    private UserMapper userMapper;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code")String code, @RequestParam(name="state") String state, HttpServletRequest request){
@@ -31,9 +36,16 @@ public class AuthorizeController {
         accessTokenDTO.setRedirect_uri(redirectUri);
         accessTokenDTO.setState(state);
         String token=githubProvider.getAccessToken(accessTokenDTO);
-        GithubUser user=githubProvider.getUser(token);
-        if(user!=null){
-            request.getSession().setAttribute("user",user);
+        GithubUser githubUser=githubProvider.getUser(token);
+        if(githubUser!=null){
+            request.getSession().setAttribute("user",githubUser);
+            User user=new User();
+            user.setToken(UUID.randomUUID().toString());
+            user.setName(githubUser.getName());
+            user.setAccountId(String.valueOf(githubUser.getId()));
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            userMapper.insert(user);
             return "redirect:/";
             //登陆成功
         }else{
