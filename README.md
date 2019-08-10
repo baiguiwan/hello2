@@ -7,3 +7,8 @@ https://v3.bootcss.com/getting-started/
 
 哔哩哔哩
 #### 其他
+
+~~~bash
+#flyway shell
+mvn flyway:migrate
+~~~
