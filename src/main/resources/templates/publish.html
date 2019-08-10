@@ -33,6 +33,9 @@
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
+                <li th:if="${session.user!=null}">
+                    <a href="/publish">发表你的看法</a>
+                </li>
                 <li class="dropdown" th:if="${session.user!=null}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false" th:text="${session.user.getName()}"> <span class="caret"></span></a>
@@ -58,23 +61,23 @@
             <form action="/publish" method="post">
                 <div class="form-group">
                     <label for="title">标题</label>
-                    <input type="text" name="title" class="form-control" id="title" placeholder="标题...">
+                    <input type="text" name="title" class="form-control" id="title" placeholder="标题..." th:value="${title}">
                 </div>
                 <div class="form-group">
                     <label for="question">问题补充</label>
-                    <textarea name="question" id="question" class="form-control" cols="30" rows="10"></textarea>
+                    <textarea name="question" id="question" class="form-control" cols="30" rows="10" th:text="*{question}"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="tag">标签</label>
-                    <input type="text" name="tag" class="form-control" id="tag" placeholder="标签...">
+                    <input type="text" name="tag" class="form-control" id="tag" placeholder="标签..." th:value="${tag}">
                 </div>
+                <span class="alert-danger" role="alert" th:text="${error}"></span>
                 <button type="submit" class="btn btn-success btn-publish">发起</button>
             </form>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12" >
             <h3>问题发起指南</h3>
             这里是问题发起指南
-
         </div>
     </div>
 </div>

@@ -21,6 +21,7 @@ public class PublishController {
     private QuestionMapper questionMapper;
     @Autowired
     private UserMapper userMapper;
+
     @GetMapping("/publish")
     public String publish() {
         return "publish";
@@ -32,22 +33,25 @@ public class PublishController {
         question.setTitle(title);
         question.setQuestion(quesstion);
         question.setTag(tag);
-        User user=null;
-        Cookie[] cookies=request.getCookies();
-        if(cookies!=null){
-            for(Cookie cookie:cookies){
-                if("token".equals(cookie.getName())){
-                    String token=cookie.getValue();
-                    user=userMapper.findByToken(token);
-                    if(user!=null){
-                        request.getSession().setAttribute("user",user);
+        User user = null;
+        model.addAttribute("title", title);
+        model.addAttribute("question", quesstion);
+        model.addAttribute("tag", tag);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("token".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+                    user = userMapper.findByToken(token);
+                    if (user != null) {
+                        request.getSession().setAttribute("user", user);
                     }
                     break;
                 }
             }
         }
-        if(user==null){
-            model.addAttribute("error","用户未登陆");
+        if (user == null) {
+            model.addAttribute("error", "用户未登陆");
             return "publish";
         }
         question.setCreator(user.getId());
