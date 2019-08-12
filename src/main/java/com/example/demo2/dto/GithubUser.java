@@ -7,5 +7,5 @@ public class GithubUser {
     private String name;
     private Long id;
     private String bio;
-    private String avatar_url;
+    private String avataUrl;//fastjson可以自动把下划线转为驼峰风格
 }
